@@ -13,7 +13,7 @@ from menu import Menu
 
 
 class Level:
-    def __init__(self):
+    def __init__(self, player_id):
 
         # get the display surface
         self.display_surface = pygame.display.get_surface()
@@ -25,7 +25,7 @@ class Level:
         self.interaction_sprites = pygame.sprite.Group()
 
         self.soil_layer = SoilLayer(self.all_sprites, self.collision_sprites)
-        self.setup()
+        self.setup(player_id)
         self.overlay = Overlay(self.player)
         self.transition = Transition(self.reset, self.player)
 
@@ -45,7 +45,7 @@ class Level:
         self.music = pygame.mixer.Sound('../audio/music.mp3')
         self.music.play(loops=-1)
 
-    def setup(self):
+    def setup(self, player_id):
         tmx_data = load_pygame('../data/map.tmx')
 
         # house
@@ -93,7 +93,9 @@ class Level:
                     tree_sprites=self.tree_sprites,
                     interaction=self.interaction_sprites,
                     soil_layer=self.soil_layer,
-                    toggle_shop=self.toggle_shop)
+                    toggle_shop=self.toggle_shop,
+                    player_id=player_id  # Truyền player_id vào Player
+                )
 
             if obj.name == 'Bed':
                 Interaction((obj.x, obj.y), (obj.width, obj.height), self.interaction_sprites, obj.name)

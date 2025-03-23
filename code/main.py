@@ -1,31 +1,23 @@
 import pygame, sys
 from settings import *
 from level import Level
-
+from database import load_player_data, create_new_player
 class Game:
-    def __init__(self):
+    def __init__(self, player_id):  # Thêm tham số player_id
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Life of a chill Guy')
         self.clock = pygame.time.Clock()
-        self.level = Level()
+        self.level = Level(player_id)  # Truyền player_id vào Level
 
         # Start menu
         self.show_intro = True
-
-
         self.intro_background = pygame.image.load('../graphics/start_menu/start_menu.png').convert_alpha()
         self.start_button = pygame.image.load('../graphics/start_menu/start_button.png').convert_alpha()
-
-
         self.intro_background = pygame.transform.scale(self.intro_background, (SCREEN_WIDTH, SCREEN_HEIGHT))
-
-
         button_width = int(SCREEN_WIDTH * 0.2)
         button_height = int(button_width * 0.5)
         self.start_button = pygame.transform.scale(self.start_button, (button_width, button_height))
-
-
         self.start_button_rect = self.start_button.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
 
     def run(self):
@@ -35,13 +27,11 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-
                 if event.type == pygame.MOUSEBUTTONDOWN and self.show_intro:
                     if self.start_button_rect.collidepoint(event.pos):
                         self.show_intro = False
 
             dt = self.clock.tick() / 1000
-
 
             if self.show_intro:
                 self.screen.blit(self.intro_background, (0, 0))
@@ -50,9 +40,16 @@ class Game:
                 self.level.run(dt)
 
             pygame.display.update()
-
 if __name__ == '__main__':
-    game = Game()
+    player_id = 1  # ID của người chơi
+    player_data = load_player_data(player_id)
+
+    # Nếu không có dữ liệu, tạo người chơi mới
+    if not player_data:
+        create_new_player("Player1")
+
+    # Khởi chạy trò chơi với player_id
+    game = Game(player_id)  # Truyền player_id vào Game
     try:
         game.run()
     finally:
