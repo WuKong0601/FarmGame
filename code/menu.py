@@ -17,7 +17,7 @@ class Menu:
 		self.padding = 8
 
 		# entries
-		self.options = list(self.player.item_inventory.keys()) + list(self.player.seed_inventory.keys())
+		self.options = list(self.player.item_inventory.keys()) + list(self.player.seed_inventory.keys()) + ['chicken', 'cow']
 		self.sell_border = len(self.player.item_inventory) - 1
 		self.setup()
 
@@ -30,6 +30,8 @@ class Menu:
 		text_rect = text_surf.get_rect(midbottom = (SCREEN_WIDTH / 2,SCREEN_HEIGHT - 20))
 
 		pygame.draw.rect(self.display_surface,'White',text_rect.inflate(10,10),0,4)
+		self.options = list(self.player.item_inventory.keys()) + list(self.player.seed_inventory.keys()) + ['chicken', 'cow']
+		self.amount_list = list(self.player.item_inventory.values()) + list(self.player.seed_inventory.values()) + [0,0]
 		self.display_surface.blit(text_surf,text_rect)
 
 	def setup(self):
@@ -62,29 +64,52 @@ class Menu:
 			if keys[pygame.K_UP]:
 				self.index -= 1
 				self.timer.activate()
-
 			if keys[pygame.K_DOWN]:
 				self.index += 1
 				self.timer.activate()
 
 			if keys[pygame.K_SPACE]:
 				self.timer.activate()
-
-				# get item
 				current_item = self.options[self.index]
 
-				# sell
+				# SELL - Vật phẩm trong item_inventory
 				if self.index <= self.sell_border:
 					if self.player.item_inventory[current_item] > 0:
 						self.player.item_inventory[current_item] -= 1
 						self.player.money += SALE_PRICES[current_item]
 
-				# buy
+				# BUY - Hạt giống hoặc vật nuôi
 				else:
-					seed_price = PURCHASE_PRICES[current_item]
-					if self.player.money >= seed_price:
-						self.player.seed_inventory[current_item] += 1
-						self.player.money -= PURCHASE_PRICES[current_item]
+					price = PURCHASE_PRICES.get(current_item, 0)  # Sử dụng get để tránh KeyError
+					if self.player.money >= price:
+						# Nếu là hạt giống
+						if current_item in self.player.seed_inventory:
+							self.player.seed_inventory[current_item] += 1
+						# Nếu là vật nuôi
+						elif current_item in ['chicken', 'cow']:
+							# Gọi phương thức add_animal từ Player
+							self.player.add_animal(current_item)
+
+						self.player.money -= price
+
+			# if keys[pygame.K_SPACE]:
+			# 	self.timer.activate()
+			#
+			# 	# get item
+			# 	current_item = self.options[self.index]
+			#
+			# 	# sell
+			# 	if self.index <= self.sell_border:
+			# 		if self.player.item_inventory[current_item] > 0:
+			# 			self.player.item_inventory[current_item] -= 1
+			# 			self.player.money += SALE_PRICES[current_item]
+			#
+			# 	# buy
+			# 	else:
+			# 		seed_price = PURCHASE_PRICES[current_item]
+			# 		if self.player.money >= seed_price:
+			# 			self.player.seed_inventory[current_item] += 1
+			# 			self.player.money -= PURCHASE_PRICES[current_item]
 
 		# clam the values
 		if self.index < 0:
@@ -121,8 +146,12 @@ class Menu:
 		self.input()
 		self.display_money()
 
+		# for text_index, text_surf in enumerate(self.text_surfs):
+		# 	top = self.main_rect.top + text_index * (text_surf.get_height() + (self.padding * 2) + self.space)
+		# 	amount_list = list(self.player.item_inventory.values()) + list(self.player.seed_inventory.values())
+		# 	amount = amount_list[text_index]
+		# 	self.show_entry(text_surf, amount, top, self.index == text_index)
 		for text_index, text_surf in enumerate(self.text_surfs):
 			top = self.main_rect.top + text_index * (text_surf.get_height() + (self.padding * 2) + self.space)
-			amount_list = list(self.player.item_inventory.values()) + list(self.player.seed_inventory.values())
-			amount = amount_list[text_index]
+			amount = self.amount_list[text_index]  # Lấy từ amount_list đã tạo
 			self.show_entry(text_surf, amount, top, self.index == text_index)

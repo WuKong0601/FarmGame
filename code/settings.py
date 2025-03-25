@@ -48,5 +48,12 @@ SALE_PRICES = {
 }
 PURCHASE_PRICES = {
 	'corn': 4,
-	'tomato': 5
+	'tomato': 5,
+	'chicken': 10,
+    'cow': 20
+}
+
+ANIMAL_SCALES = {
+    'chicken': 3.0,
+    'cow': 1.0
 }

@@ -1,4 +1,6 @@
 import pygame
+
+from animals import Animal
 from settings import *
 from player import Player
 from overlay import Overlay
@@ -13,7 +15,7 @@ from menu import Menu
 
 
 class Level:
-    def __init__(self, player_id):
+    def __init__(self):
 
         # get the display surface
         self.display_surface = pygame.display.get_surface()
@@ -22,10 +24,12 @@ class Level:
         self.all_sprites = CameraGroup()
         self.collision_sprites = pygame.sprite.Group()
         self.tree_sprites = pygame.sprite.Group()
+        self.animal_sprites = pygame.sprite.Group()
         self.interaction_sprites = pygame.sprite.Group()
 
         self.soil_layer = SoilLayer(self.all_sprites, self.collision_sprites)
-        self.setup(player_id)
+        self.soil_layer.level = self
+        self.setup()
         self.overlay = Overlay(self.player)
         self.transition = Transition(self.reset, self.player)
 
@@ -45,7 +49,7 @@ class Level:
         self.music = pygame.mixer.Sound('../audio/music.mp3')
         self.music.play(loops=-1)
 
-    def setup(self, player_id):
+    def setup(self):
         tmx_data = load_pygame('../data/map.tmx')
 
         # house
@@ -93,9 +97,7 @@ class Level:
                     tree_sprites=self.tree_sprites,
                     interaction=self.interaction_sprites,
                     soil_layer=self.soil_layer,
-                    toggle_shop=self.toggle_shop,
-                    player_id=player_id  # Truyền player_id vào Player
-                )
+                    toggle_shop=self.toggle_shop)
 
             if obj.name == 'Bed':
                 Interaction((obj.x, obj.y), (obj.width, obj.height), self.interaction_sprites, obj.name)
@@ -110,9 +112,46 @@ class Level:
             z=LAYERS['ground'])
 
     def player_add(self, item):
-
-        self.player.item_inventory[item] += 1
-        self.success.play()
+        # if item in ['chicken', 'cow', 'sheep']:
+        #     scale_factors = {
+        #         'chicken': 3.0,
+        #         'cow': 1.0
+        #     }
+        #     Animal(
+        #         item,
+        #         self.get_random_position(),
+        #         [self.all_sprites, self.animal_sprites],
+        #         scale=scale_factors[item]  # Truyền tham số scale
+        #     )
+        if item in ['chicken', 'cow', 'sheep']:
+            scale_factors = {
+                'chicken': 3.0,
+                'cow': 1.0
+            }
+            Animal(
+                animal_type=item,
+                pos=self.get_random_position(),
+                groups=[self.all_sprites, self.animal_sprites],
+                scale=scale_factors[item]  # Truyền tham số scale
+            )
+            self.success.play()
+        # Xử lý riêng vật nuôi
+        if item in ['chicken', 'cow']:
+            Animal(item, self.get_random_position(), [self.all_sprites, self.animal_sprites])
+            self.success.play()  # Play sound khi mua thành công
+        # Xử lý vật phẩm thông thường
+        elif item in self.player.item_inventory:
+            self.player.item_inventory[item] += 1
+            self.success.play()
+    # def player_add(self, item):
+    #     if item in ['chicken', 'cow']:
+    #         Animal(item, self.get_random_position(), [self.all_sprites, self.animal_sprites])
+    #     else:
+    #         self.player.item_inventory[item] += 1
+    #         self.success.play()
+    #
+    def get_random_position(self):
+        return (randint(100, SCREEN_WIDTH - 100), randint(100, SCREEN_HEIGHT - 100))
 
     def toggle_shop(self):
 
@@ -188,11 +227,12 @@ class CameraGroup(pygame.sprite.Group):
                     offset_rect.center -= self.offset
                     self.display_surface.blit(sprite.image, offset_rect)
 
-            # anaytics
-            # if sprite == player:
-            # 	pygame.draw.rect(self.display_surface,'red',offset_rect,5)
-            # 	hitbox_rect = player.hitbox.copy()
-            # 	hitbox_rect.center = offset_rect.center
-            # 	pygame.draw.rect(self.display_surface,'green',hitbox_rect,5)
-            # 	target_pos = offset_rect.center + PLAYER_TOOL_OFFSET[player.status.split('_')[0]]
-            # 	pygame.draw.circle(self.display_surface,'blue',target_pos,5)
+                # # anaytics
+                # if sprite == player:
+                # 	pygame.draw.rect(self.display_surface,'red',offset_rect,5)
+                # 	hitbox_rect = player.hitbox.copy()
+                # 	hitbox_rect.center = offset_rect.center
+                # 	pygame.draw.rect(self.display_surface,'green',hitbox_rect,5)
+                # 	target_pos = offset_rect.center + PLAYER_TOOL_OFFSET[player.status.split('_')[0]]
+                # 	pygame.draw.circle(self.display_surface,'blue',target_pos,5)
+

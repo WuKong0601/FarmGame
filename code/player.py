@@ -2,14 +2,11 @@ import pygame
 from settings import *
 from support import *
 from timer import Timer
-from database import load_player_data, save_player_data
+
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, group, collision_sprites, tree_sprites, interaction, soil_layer, toggle_shop, player_id=1):
+    def __init__(self, pos, group, collision_sprites, tree_sprites, interaction, soil_layer, toggle_shop):
         super().__init__(group)
-        # Tải dữ liệu người chơi từ cơ sở dữ liệu
-        self.player_id = player_id
-        self.load_data()
 
         self.import_assets()
         self.status = 'down_idle'
@@ -71,24 +68,10 @@ class Player(pygame.sprite.Sprite):
         self.watering = pygame.mixer.Sound('../audio/water.mp3')
         self.watering.set_volume(0.2)
 
-    def load_data(self):
-        """Tải dữ liệu người chơi từ cơ sở dữ liệu."""
-        player_data = load_player_data(self.player_id)
-        if player_data:
-            self.name = player_data['name']
-            self.money = player_data['money']
-            self.item_inventory = player_data['inventory']
-            self.seed_inventory = player_data['seed_inventory']
-        else:
-            # Nếu không có dữ liệu, sử dụng giá trị mặc định
-            self.name = "Player"
-            self.money = 200
-            self.item_inventory = {'wood': 20, 'apple': 20, 'corn': 20, 'tomato': 20}
-            self.seed_inventory = {'corn': 5, 'tomato': 5}
-
-    def save_data(self):
-        """Lưu dữ liệu người chơi vào cơ sở dữ liệu."""
-        save_player_data(self.player_id, self.name, self.money, self.item_inventory, self.seed_inventory)
+    def add_animal(self, animal_type):
+        # Gọi phương thức từ Level để thêm vật nuôi
+        if hasattr(self.soil_layer, 'level') and self.soil_layer.level:
+            self.soil_layer.level.player_add(animal_type)
 
     def use_tool(self):
         if self.selected_tool == 'hoe':

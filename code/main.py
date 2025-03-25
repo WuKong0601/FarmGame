@@ -1,14 +1,13 @@
 import pygame, sys
 from settings import *
 from level import Level
-from database import load_player_data, create_new_player
 class Game:
-    def __init__(self, player_id):  # Thêm tham số player_id
+    def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Life of a chill Guy')
         self.clock = pygame.time.Clock()
-        self.level = Level(player_id)  # Truyền player_id vào Level
+        self.level = Level()
 
         # Start menu
         self.show_intro = True
@@ -41,17 +40,5 @@ class Game:
 
             pygame.display.update()
 if __name__ == '__main__':
-    player_id = 1  # ID của người chơi
-    player_data = load_player_data(player_id)
-
-    # Nếu không có dữ liệu, tạo người chơi mới
-    if not player_data:
-        create_new_player("Player1")
-
-    # Khởi chạy trò chơi với player_id
-    game = Game(player_id)  # Truyền player_id vào Game
-    try:
-        game.run()
-    finally:
-        # Lưu dữ liệu người chơi khi thoát trò chơi
-        game.level.player.save_data()
+	game = Game()
+	game.run()
