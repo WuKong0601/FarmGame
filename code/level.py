@@ -1,6 +1,6 @@
 import pygame
 
-from animals import Animal
+from animals import Animal, Fish
 from settings import *
 from player import Player
 from overlay import Overlay
@@ -111,6 +111,13 @@ class Level:
             groups=self.all_sprites,
             z=LAYERS['ground'])
 
+        for x, y, _ in tmx_data.get_layer_by_name('Water').tiles():
+            if randint(1, 20) == 1:  # 5% cơ hội xuất hiện cá
+                Fish(
+                    pos=(x * TILE_SIZE + TILE_SIZE // 2, y * TILE_SIZE + TILE_SIZE // 2),
+                    groups=[self.all_sprites, self.animal_sprites],
+                    collision_sprites=self.collision_sprites
+                )
     def player_add(self, item):
 
         if item in ['chicken', 'cow', 'sheep']:

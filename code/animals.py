@@ -3,7 +3,7 @@ from settings import *
 from random import randint, choice
 from timer import Timer
 from support import import_folder
-
+from sprites import Generic
 
 class Animal(pygame.sprite.Sprite):
     def __init__(self, animal_type, pos, groups, collision_sprites, scale=1.0):
@@ -141,3 +141,56 @@ class Animal(pygame.sprite.Sprite):
         """Cập nhật trạng thái mỗi frame"""
         self.move(dt)
         self.animate(dt)
+
+
+class Fish(Animal):
+    def __init__(self, pos, groups, collision_sprites):
+        super().__init__(
+            animal_type='fish',  # Thư mục graphics/animals/fish chứa animation
+            pos=pos,
+            groups=groups,
+            collision_sprites=collision_sprites,
+            scale=1.0
+        )
+        self.speed = randint(50, 80)  # Tốc độ chậm hơn động vật trên cạn
+        self.z = LAYERS['water']  # Hiển thị dưới lớp nước
+
+    def change_direction(self):
+        """Cá chỉ di chuyển ngang"""
+        directions = [(-1, 0), (1, 0)]  # Chỉ di chuyển trái/phải
+        self.direction = pygame.math.Vector2(choice(directions))
+
+    def move(self, dt):
+        """Ghi đè phương thức move để cá không bị giới hạn bởi clamp_ip"""
+        self.walk_timer.update()
+        self.idle_timer.update()
+
+        if self.is_moving:
+            if not self.walk_timer.active:
+                self.is_moving = False
+                self.status = 'idle'
+                self.direction = pygame.math.Vector2()
+                self.idle_timer.activate()
+        else:
+            if not self.idle_timer.active:
+                self.is_moving = True
+                self.change_direction()
+                self.walk_timer.activate()
+
+        if self.is_moving:
+            self.status = 'walk'
+            self.pos.x += self.direction.x * self.speed * dt
+            self.hitbox.centerx = round(self.pos.x)
+            self.rect.centerx = self.hitbox.centerx
+            self.collision('horizontal')
+
+    def create_bubble(self):
+        bubble = Generic(
+            pos=self.rect.midtop,
+            surf=pygame.Surface((8, 8), pygame.SRCALPHA),
+            groups=self.groups(),
+            z=LAYERS['water']
+        )
+        pygame.draw.circle(bubble.image, (173, 216, 230), (4, 4), 4)
+        # Tự hủy sau 1 giây
+        Timer(1000, lambda: bubble.kill()).activate()
