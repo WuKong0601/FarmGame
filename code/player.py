@@ -33,6 +33,7 @@ class Player(pygame.sprite.Sprite):
             'seed use': Timer(350, self.use_seed),
             'seed switch': Timer(200),
         }
+        self.lead_cooldown = Timer(200)
 
         # tools
         self.tools = ['hoe', 'axe', 'water']
@@ -67,7 +68,9 @@ class Player(pygame.sprite.Sprite):
         # sound
         self.watering = pygame.mixer.Sound('../audio/water.mp3')
         self.watering.set_volume(0.2)
-
+        #lead animal
+        self.leading_animal = None
+        self.lead_key_pressed = False
     def add_animal(self, animal_type):
         # Gọi phương thức từ Level để thêm vật nuôi
         if hasattr(self.soil_layer, 'level') and self.soil_layer.level:
@@ -115,6 +118,14 @@ class Player(pygame.sprite.Sprite):
 
     def input(self):
         keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_w] and not self.lead_key_pressed and not self.lead_cooldown.active:
+            self.lead_key_pressed = True
+            self.lead_cooldown.activate()
+            self.toggle_lead_animal()
+
+        elif not keys[pygame.K_w]:
+            self.lead_key_pressed = False
 
         if not self.timers['tool use'].active and not self.sleep:
             # directions
@@ -170,6 +181,29 @@ class Player(pygame.sprite.Sprite):
                     else:
                         self.status = 'left_idle'
                         self.sleep = True
+
+    def toggle_lead_animal(self):
+        if self.leading_animal:
+            # Huỷ dắt
+            self.leading_animal.stop_leading()
+            self.leading_animal = None
+
+        else:
+            # Tìm thú gần nhất
+            closest = None
+            min_distance = float('inf')
+
+            for animal in self.soil_layer.level.animal_sprites:
+                if hasattr(animal, 'is_being_led'):  # Kiểm tra có phải Animal không
+                    dist = pygame.math.Vector2(animal.rect.center).distance_to(self.rect.center)
+                    if dist < 100 and dist < min_distance:
+                        min_distance = dist
+                        closest = animal
+
+            if closest:
+                self.leading_animal = closest
+                closest.is_being_led = True
+                closest.leader = self
 
     def get_status(self):
 
@@ -228,8 +262,23 @@ class Player(pygame.sprite.Sprite):
         self.get_status()
         self.update_timers()
         self.get_target_pos()
+        self.lead_cooldown.update()
 
-        if pygame.key.get_pressed()[pygame.K_p]:  # Nhấn P để in tọa độ
-            print(f"Player position: {self.rect.center}")
+        # Debug position
+        if pygame.key.get_pressed()[pygame.K_p]:
+            print(
+                f"Player: {self.rect.center}, Leading: {self.leading_animal.rect.center if self.leading_animal else None}")
+
         self.move(dt)
         self.animate(dt)
+
+    def draw_lead_rope(self, display_surface):
+        """Vẽ dây dắt lên màn hình"""
+        if self.leading_animal:
+            pygame.draw.line(
+                display_surface,
+                (139, 69, 19),  # Màu nâu
+                self.rect.center - self.soil_layer.level.all_sprites.offset,  # Trừ offset camera
+                self.leading_animal.rect.center - self.soil_layer.level.all_sprites.offset,
+                3
+            )

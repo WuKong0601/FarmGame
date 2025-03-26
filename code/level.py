@@ -199,6 +199,10 @@ class Level:
         # transition overlay
         if self.player.sleep:
             self.transition.play()
+        #rope
+        if hasattr(self.player, 'draw_lead_rope'):
+            self.player.draw_lead_rope(self.display_surface)
+
 
 
 class CameraGroup(pygame.sprite.Group):
