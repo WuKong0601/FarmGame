@@ -229,5 +229,7 @@ class Player(pygame.sprite.Sprite):
         self.update_timers()
         self.get_target_pos()
 
+        if pygame.key.get_pressed()[pygame.K_p]:  # Nhấn P để in tọa độ
+            print(f"Player position: {self.rect.center}")
         self.move(dt)
         self.animate(dt)

@@ -57,3 +57,4 @@ ANIMAL_SCALES = {
     'chicken': 3.0,
     'cow': 1.0
 }
+

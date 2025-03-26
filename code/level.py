@@ -112,44 +112,28 @@ class Level:
             z=LAYERS['ground'])
 
     def player_add(self, item):
-        # if item in ['chicken', 'cow', 'sheep']:
-        #     scale_factors = {
-        #         'chicken': 3.0,
-        #         'cow': 1.0
-        #     }
-        #     Animal(
-        #         item,
-        #         self.get_random_position(),
-        #         [self.all_sprites, self.animal_sprites],
-        #         scale=scale_factors[item]  # Truyền tham số scale
-        #     )
+
         if item in ['chicken', 'cow', 'sheep']:
             scale_factors = {
                 'chicken': 3.0,
-                'cow': 1.0
+                'cow': 0.8
             }
+            spawn_x = self.player.rect.centerx + randint(-100, 100)
+            spawn_y = self.player.rect.centery + randint(-100, 100)
+            spawn_pos = (spawn_x, spawn_y)
+
             Animal(
                 animal_type=item,
-                pos=self.get_random_position(),
+                pos=spawn_pos,
                 groups=[self.all_sprites, self.animal_sprites],
-                scale=scale_factors[item]  # Truyền tham số scale
+                collision_sprites=self.collision_sprites,
+                scale=scale_factors[item]
             )
             self.success.play()
-        # Xử lý riêng vật nuôi
-        if item in ['chicken', 'cow']:
-            Animal(item, self.get_random_position(), [self.all_sprites, self.animal_sprites])
-            self.success.play()  # Play sound khi mua thành công
-        # Xử lý vật phẩm thông thường
         elif item in self.player.item_inventory:
             self.player.item_inventory[item] += 1
             self.success.play()
-    # def player_add(self, item):
-    #     if item in ['chicken', 'cow']:
-    #         Animal(item, self.get_random_position(), [self.all_sprites, self.animal_sprites])
-    #     else:
-    #         self.player.item_inventory[item] += 1
-    #         self.success.play()
-    #
+
     def get_random_position(self):
         return (randint(100, SCREEN_WIDTH - 100), randint(100, SCREEN_HEIGHT - 100))
 
@@ -226,13 +210,3 @@ class CameraGroup(pygame.sprite.Group):
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
                     self.display_surface.blit(sprite.image, offset_rect)
-
-                # # anaytics
-                # if sprite == player:
-                # 	pygame.draw.rect(self.display_surface,'red',offset_rect,5)
-                # 	hitbox_rect = player.hitbox.copy()
-                # 	hitbox_rect.center = offset_rect.center
-                # 	pygame.draw.rect(self.display_surface,'green',hitbox_rect,5)
-                # 	target_pos = offset_rect.center + PLAYER_TOOL_OFFSET[player.status.split('_')[0]]
-                # 	pygame.draw.circle(self.display_surface,'blue',target_pos,5)
-

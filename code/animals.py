@@ -1,12 +1,12 @@
 import pygame
-from timer import Timer
 from settings import *
 from random import randint, choice
 from timer import Timer
 from support import import_folder
 
+
 class Animal(pygame.sprite.Sprite):
-    def __init__(self, animal_type, pos, groups, scale=1.0):
+    def __init__(self, animal_type, pos, groups, collision_sprites, scale=1.0):
         super().__init__(groups)
         self.animal_type = animal_type
         self.scale = scale
@@ -18,44 +18,63 @@ class Animal(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         self.z = LAYERS['main']
         self._update_hitbox()
-        self.walk_timer = Timer(2000, self.change_direction)  # 2000ms = 2 giây
-        self.walk_timer.activate()
+
+        # Movement attributes
         self.direction = pygame.math.Vector2()
+        self.pos = pygame.math.Vector2(self.rect.center)
         self.speed = randint(50, 100)
+
+        # Collision
+        self.collision_sprites = collision_sprites
+        self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.5, -self.rect.height * 0.7)
+
+        # Timers
+        self.walk_timer = Timer(randint(2000, 5000))
+        self.idle_timer = Timer(randint(1000, 3000))
+        self.walk_timer.activate()
+        self.is_moving = True
+        self.change_direction()
 
     def change_direction(self):
         """Thay đổi hướng di chuyển ngẫu nhiên"""
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (0, 0)]  # Thêm (0,0) để có lúc đứng yên
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Loại bỏ (0,0) để luôn di chuyển khi không idle
         self.direction = pygame.math.Vector2(choice(directions))
-        # Đặt lại timer với thời gian ngẫu nhiên
-        self.walk_timer.duration = randint(1000, 3000)  # 1-3 giây
-        self.walk_timer.activate()
+        self.direction = self.direction.normalize() if self.direction.magnitude() > 0 else self.direction
+        self.speed = randint(50, 100)
+
+    def collision(self, direction):
+        """Xử lý va chạm với vật cản"""
+        for sprite in self.collision_sprites:
+            if hasattr(sprite, 'hitbox'):
+                if sprite.hitbox.colliderect(self.hitbox):
+                    if direction == 'horizontal':
+                        if self.direction.x > 0:  # moving right
+                            self.hitbox.right = sprite.hitbox.left
+                        if self.direction.x < 0:  # moving left
+                            self.hitbox.left = sprite.hitbox.right
+                        self.rect.centerx = self.hitbox.centerx
+                        self.pos.x = self.hitbox.centerx
+                        self.change_direction()
+
+                    if direction == 'vertical':
+                        if self.direction.y > 0:  # moving down
+                            self.hitbox.bottom = sprite.hitbox.top
+                        if self.direction.y < 0:  # moving up
+                            self.hitbox.top = sprite.hitbox.bottom
+                        self.rect.centery = self.hitbox.centery
+                        self.pos.y = self.hitbox.centery
+                        self.change_direction()
 
     def _scale_image(self):
         """Scale tất cả frame animation theo tỷ lệ"""
         for status in self.animations:
             scaled_frames = []
             for frame in self.animations[status]:
-                # Tính toán kích thước mới
                 new_width = int(frame.get_width() * self.scale)
                 new_height = int(frame.get_height() * self.scale)
-                # Scale hình ảnh
                 scaled_frames.append(pygame.transform.scale(frame, (new_width, new_height)))
             self.animations[status] = scaled_frames
-
-        # Cập nhật hình ảnh hiện tại
         self.image = self.animations[self.status][self.frame_index]
-    # def _scale_image(self):
-    #     """Scale tất cả frame animation theo tỷ lệ"""
-    #     for status, frames in self.animations.items():
-    #         self.animations[status] = [
-    #             pygame.transform.scale(
-    #                 frame,
-    #                 (int(frame.get_width() * self.scale),
-    #                  int(frame.get_height() * self.scale))
-    #             ) for frame in frames
-    #         ]
-    #     self.image = self.animations[self.status][self.frame_index]
 
     def _update_hitbox(self):
         """Cập nhật hitbox theo tỷ lệ scale"""
@@ -64,46 +83,61 @@ class Animal(pygame.sprite.Sprite):
             -self.rect.height * 0.6 * self.scale
         )
 
-    def animate(self, dt):
-        self.frame_index += 6 * dt
-        if self.frame_index >= len(self.animations[self.status]):
-            self.frame_index = 0
-
-        # Scale lại ảnh mỗi frame nếu cần
-        old_center = self.rect.center
-        self.image = self.animations[self.status][int(self.frame_index)]
-        self.rect = self.image.get_rect(center=old_center)
-        self._update_hitbox()
-
     def import_assets(self):
+        """Import animation assets"""
         self.animations = {'idle': [], 'walk': []}
         for animation in self.animations.keys():
             full_path = f'../graphics/animals/{self.animal_type}/{animation}'
             self.animations[animation] = import_folder(full_path)
 
-    def change_direction(self):
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (0, 0)]
-        self.direction = pygame.math.Vector2(choice(directions))
-        self.walk_timer.duration = randint(1000, 3000)
-        self.walk_timer.activate()
-
     def animate(self, dt):
-        self.frame_index += 4 * dt
+        """Xử lý animation"""
+        self.frame_index += 6 * dt
         if self.frame_index >= len(self.animations[self.status]):
             self.frame_index = 0
+        old_center = self.rect.center
         self.image = self.animations[self.status][int(self.frame_index)]
+        self.rect = self.image.get_rect(center=old_center)
+        self._update_hitbox()
 
     def move(self, dt):
-        if self.direction.magnitude() > 0:
-            self.direction = self.direction.normalize()
-            self.status = 'walk'
-        else:
-            self.status = 'idle'
+        """Xử lý di chuyển"""
+        self.walk_timer.update()
+        self.idle_timer.update()
 
-        self.rect.center += self.direction * self.speed * dt
+        # Chuyển đổi giữa các trạng thái di chuyển và idle
+        if self.is_moving:
+            if not self.walk_timer.active:
+                self.is_moving = False
+                self.status = 'idle'
+                self.direction = pygame.math.Vector2()
+                self.idle_timer.activate()
+                self.idle_timer.duration = randint(1000, 3000)
+        else:
+            if not self.idle_timer.active:
+                self.is_moving = True
+                self.change_direction()
+                self.walk_timer.activate()
+                self.walk_timer.duration = randint(2000, 5000)
+
+        # Di chuyển nếu đang trong trạng thái di chuyển
+        if self.is_moving:
+            self.status = 'walk'
+            self.pos.x += self.direction.x * self.speed * dt
+            self.hitbox.centerx = round(self.pos.x)
+            self.rect.centerx = self.hitbox.centerx
+            self.collision('horizontal')
+
+            self.pos.y += self.direction.y * self.speed * dt
+            self.hitbox.centery = round(self.pos.y)
+            self.rect.centery = self.hitbox.centery
+            self.collision('vertical')
+
+        # Giới hạn di chuyển trong màn hình
         self.rect.clamp_ip(pygame.Rect(100, 100, SCREEN_WIDTH - 200, SCREEN_HEIGHT - 200))
+        self.hitbox.center = self.rect.center
 
     def update(self, dt):
-        self.walk_timer.update()
+        """Cập nhật trạng thái mỗi frame"""
         self.move(dt)
         self.animate(dt)
