@@ -28,6 +28,8 @@ class Animal(pygame.sprite.Sprite):
         # Collision
         self.collision_sprites = collision_sprites
         self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.5, -self.rect.height * 0.7)
+        self.hitbox_offset = Vector2(0, self.rect.height * 0.15)  # Điều chỉnh vị trí hitbox
+        # self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.5, -self.rect.height * 0.7)
 
         # Timers
         self.walk_timer = Timer(randint(2000, 5000))
@@ -47,27 +49,34 @@ class Animal(pygame.sprite.Sprite):
         self.speed = randint(50, 100)
 
     def collision(self, direction):
-
         for sprite in self.collision_sprites:
             if hasattr(sprite, 'hitbox'):
                 if sprite.hitbox.colliderect(self.hitbox):
                     if direction == 'horizontal':
-                        if self.direction.x > 0:  # moving right
+                        # Xử lý va chạm ngang
+                        if self.direction.x > 0:  # Di chuyển sang phải
                             self.hitbox.right = sprite.hitbox.left
-                        if self.direction.x < 0:  # moving left
+                        if self.direction.x < 0:  # Di chuyển sang trái
                             self.hitbox.left = sprite.hitbox.right
                         self.rect.centerx = self.hitbox.centerx
                         self.pos.x = self.hitbox.centerx
-                        self.change_direction()
+
+                        # Đổi hướng khi va chạm (chỉ khi không bị dắt)
+                        if not self.is_being_led:
+                            self.direction.x *= -1
 
                     if direction == 'vertical':
-                        if self.direction.y > 0:  # moving down
+                        # Xử lý va chạm dọc
+                        if self.direction.y > 0:  # Di chuyển xuống
                             self.hitbox.bottom = sprite.hitbox.top
-                        if self.direction.y < 0:  # moving up
+                        if self.direction.y < 0:  # Di chuyển lên
                             self.hitbox.top = sprite.hitbox.bottom
                         self.rect.centery = self.hitbox.centery
                         self.pos.y = self.hitbox.centery
-                        self.change_direction()
+
+                        # Đổi hướng khi va chạm (chỉ khi không bị dắt)
+                        if not self.is_being_led:
+                            self.direction.y *= -1
 
     def _scale_image(self):
         """Scale tất cả frame animation theo tỷ lệ"""
@@ -81,11 +90,16 @@ class Animal(pygame.sprite.Sprite):
         self.image = self.animations[self.status][self.frame_index]
 
     def _update_hitbox(self):
-        """Cập nhật hitbox theo tỷ lệ scale"""
-        self.hitbox = self.rect.inflate(
-            -self.rect.width * 0.3 * self.scale,
-            -self.rect.height * 0.6 * self.scale
-        )
+        """Cập nhật hitbox theo tỷ lệ scale và vị trí"""
+        if not hasattr(self, 'hitbox'):  # Kiểm tra nếu hitbox chưa tồn tại
+            self.hitbox = self.rect.copy()  # Tạo hitbox mới nếu chưa có
+
+        # Cập nhật kích thước và vị trí hitbox
+        self.hitbox.width = self.rect.width * 0.5 * self.scale
+        self.hitbox.height = self.rect.height * 0.3 * self.scale
+        self.hitbox.centerx = self.rect.centerx
+        self.hitbox.centery = self.rect.centery + self.rect.height * 0.15 * self.scale
+        self.hitbox_offset = Vector2(0, self.rect.height * 0.15 * self.scale)
 
     def import_assets(self):
         """Import animation assets"""
@@ -122,7 +136,7 @@ class Animal(pygame.sprite.Sprite):
                 if current_distance > desired_distance:
                     # Tính hướng di chuyển về phía người dắt
                     move_direction = (leader_pos - animal_pos).normalize()
-                    self.pos += move_direction * self.speed * 1.5 * dt  # Di chuyển nhanh hơn khi bị dắt
+                    self.pos += move_direction * self.speed * 2.0 * dt  # Di chuyển nhanh hơn khi bị dắt
 
                     # Cập nhật vị trí và hitbox
                     self.rect.center = self.pos
@@ -131,55 +145,37 @@ class Animal(pygame.sprite.Sprite):
                 else:
                     self.status = 'idle'
         else:
-            # Logic di chuyển tự do
+            # Logic di chuyển tự do với va chạm mới
             if not self.is_moving and not self.idle_timer.active:
                 self.is_moving = True
                 self.walk_timer.activate()
-                self.change_direction()  # Quan trọng: chọn hướng mới khi bắt đầu di chuyển lại
+                self.change_direction()
 
             if self.is_moving:
                 if not self.walk_timer.active:
                     self.is_moving = False
                     self.idle_timer.activate()
+                    self.status = 'idle'
                 else:
-                    # Di chuyển bình thường
+                    # Lưu vị trí cũ để phục hồi nếu va chạm
+                    old_pos = self.pos.copy()
+
+                    # Di chuyển
                     self.pos += self.direction * self.speed * dt
-                    self.rect.center = self.pos
-                    self.hitbox.center = self.rect.center
+                    self.hitbox.centerx = round(self.pos.x)
+                    self.rect.centerx = self.hitbox.centerx
                     self.collision('horizontal')
+
+                    self.hitbox.centery = round(self.pos.y)
+                    self.rect.centery = self.hitbox.centery
                     self.collision('vertical')
 
-        # else:
-        #     # Logic di chuyển tự do (giữ nguyên)
-        #     if not self.is_moving and not self.idle_timer.active:
-        #         self.is_moving = True
-        #         self.walk_timer.activate()
-        #         self.change_direction()  # Quan trọng: chọn hướng mới khi bắt đầu di chuyển lại
-        #
-        #     if self.is_moving:
-        #         if not self.walk_timer.active:
-        #             self.is_moving = False
-        #             self.status = 'idle'
-        #             self.direction = Vector2()
-        #             self.idle_timer.activate()
-        #     else:
-        #         if not self.idle_timer.active:
-        #             self.is_moving = True
-        #             self.change_direction()
-        #             self.walk_timer.activate()
-        #
-        #     if self.is_moving:
-        #         self.status = 'walk'
-        #         self.pos += self.direction * self.speed * dt
-        #         self.rect.center = self.pos
-        #         self.hitbox.center = self.rect.center
-        #         self.collision('horizontal')
-        #         self.collision('vertical')
-        #
-        # # Giới hạn di chuyển (bỏ qua nếu đang bị dắt)
-        # if not self.is_being_led:
-        #     self.rect.clamp_ip(pygame.Rect(100, 100, SCREEN_WIDTH - 200, SCREEN_HEIGHT - 200))
-        #     self.hitbox.center = self.rect.center
+                    # Cập nhật trạng thái di chuyển
+                    if self.direction.magnitude() > 0:
+                        self.status = 'walk'
+                    else:
+                        self.status = 'idle'
+
 
     def stop_leading(self):
         """Phương thức được gọi khi ngừng dắt"""
@@ -215,6 +211,9 @@ class Fish(Animal):
         self.z = LAYERS['water']  # Hiển thị dưới lớp nước
         self.bubble_timer = Timer(2000, self.create_bubble)
         self.bubble_timer.activate()
+        self._update_hitbox()
+
+
 
     def change_direction(self):
         """Cá chỉ di chuyển ngang"""
@@ -240,6 +239,8 @@ class Fish(Animal):
 
         if self.is_moving:
             self.status = 'walk'
+            old_pos = self.pos.copy()
+
             self.pos.x += self.direction.x * self.speed * dt
             self.hitbox.centerx = round(self.pos.x)
             self.rect.centerx = self.hitbox.centerx
