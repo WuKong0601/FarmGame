@@ -53,6 +53,9 @@ W	Dắt thả vật nuôi
 Enter	Tương tác (ngủ khi "enter với giường, mua bán khi "enter" với trader)
 ESC	Mở/đóng menu
 
+## 🌳 Cấu trúc dự án đầy đủ
+
+```bash
 FarmingGame/
 │
 ├── 📁 .git/                # Thư mục Git chứa thông tin version control
