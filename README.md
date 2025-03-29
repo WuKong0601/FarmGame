@@ -53,21 +53,63 @@ W	Dắt thả vật nuôi
 Enter	Tương tác (ngủ khi "enter với giường, mua bán khi "enter" với trader)
 ESC	Mở/đóng menu
 
-📂 Cấu Trúc Dự Án
-life-of-a-chill-guy/
-├── data/                # File bản đồ Tiled
-├── graphics/            # Assets đồ họa
-│   ├── animals/         # Sprite vật nuôi
-│   ├── character/       # Nhân vật chính
-│   ├── soil/            # Hiệu ứng đất
-│   └── ...              # Các thư mục khác
-├── audio/               # Âm thanh
-├── main.py              # Khởi chạy game
-├── settings.py          # Cấu hình game
-├── level.py             # Quản lý màn chơi
-├── player.py            # Người chơi
-├── animals.py           # Hệ thống vật nuôi
-└── ...                  # Các file khác
+FarmingGame/
+│
+├── 📁 .git/                # Thư mục Git chứa thông tin version control
+├── 📁 .idea/              # Cấu hình dự án cho JetBrains IDE (PyCharm)
+├── 📁 .venv/              # Môi trường ảo Python chứa các dependencies
+│
+├── 🔊 audio/              # Thư mục chứa tất cả file âm thanh
+│   ├── 🎵 success.wav     # Âm thanh khi hoàn thành nhiệm vụ
+│   └── 🎵 music.mp3       # Nhạc nền game
+│
+├── 💻 code/               # Thư mục mã nguồn chính
+│   ├── 🚀 main.py         # File khởi chạy chính của game
+│   ├── 🐄 animals.py      # Logic vật nuôi (gà, bò, cá)
+│   ├── 🗺 level.py        # Quản lý bản đồ và level
+│   ├── 🖥 overlay.py      # Giao diện người dùng (UI)
+│   ├── 🧍 player.py       # Điều khiển nhân vật chính
+│   ├── ⚙️ settings.py     # Các hằng số cấu hình game
+│   ├── ☁️ sky.py          # Hệ thống thời tiết (mưa, ngày/đêm)
+│   ├── 🌱 soil.py         # Hệ thống trồng trọt và đất đai
+│   ├── 🖼 sprites.py      # Lớp cơ sở cho các đối tượng đồ họa
+│   ├── 🛠 support.py      # Các hàm tiện ích hỗ trợ
+│   ├── ⏱ timer.py        # Hệ thống hẹn giờ trong game
+│   └── ✨ transition.py   # Hiệu ứng chuyển cảnh
+│
+├── 📊 data/               # Dữ liệu bản đồ game
+│   ├── 📁 Tilesets/       # Bộ tile đồ họa cho bản đồ
+│   │   ├── tileset1.png
+│   │   └── tileset2.png
+│   └── 🗺 map.tmx         # File bản đồ chính (được tạo bằng Tiled)
+│
+├── 🔠 font/               # Thư mục font chữ
+│   └── 🅻 LycheeSoda.ttf  # Font chữ chính của game
+│
+└── 🎨 graphics/           # Tất cả assets đồ họa
+    ├── 🐓 animals/        # Sprite vật nuôi
+    │   ├── 🐔 chicken/    # Sprite gà
+    │   ├── 🐄 cow/        # Sprite bò
+    │   └── 🐟 fish/       # Sprite cá
+    │
+    ├── 🧍 character/      # Nhân vật chính
+    │   ├── up.png         # Animation đi lên
+    │   ├── down.png       # Animation đi xuống
+    │   └── ...            # Các hướng khác
+    │
+    ├── 🌽 fruit/          # Cây trồng và hoa quả
+    │   ├── corn/          # Sprite ngô
+    │   └── tomato/        # Sprite cà chua
+    │
+    ├── 🌍 world/          # Bối cảnh nền
+    │   ├── ground.png     # Nền đất
+    │   └── water.png      # Nền nước
+    │
+    ├── 💧 water/          # Hiệu ứng nước
+    │   ├── frame1.png
+    │   └── frame2.png
+    │
+    └── ...                # Các thư mục đồ họa khác
 
 🖼️ Ảnh Chụp Màn Gian
 
