@@ -136,10 +136,12 @@ Gameplay 7: Thu hoạch
 
 Gameplay 8: Giao dịch
 ![image](https://github.com/user-attachments/assets/9677e559-437d-47a9-beb0-840fb2625ca5)
+
 ![image](https://github.com/user-attachments/assets/d521636f-c672-428f-827e-3eb668675250)
 
 Gameplay 9: Chăn nuôi
 ![image](https://github.com/user-attachments/assets/30ab4d81-a949-4d11-9289-77d6f37d3359)
+
 ![image](https://github.com/user-attachments/assets/d489522b-e091-4fa6-b426-133bd2575b51)
 
 ## 📌 Tiến Độ Phát Triển
