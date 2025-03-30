@@ -114,7 +114,6 @@ FarmingGame/
 
 🖼️ Ảnh Chụp Màn Gian
 Gameplay 1: Cuốc đất
-![cuoc-dat](https://github.com/user-attachments/assets/c75106f6-d53f-4eee-b8ec-12d3d1494d96)
 
 ![Cuốc đất](./Gameplay/cuoc-dat.png)
 
