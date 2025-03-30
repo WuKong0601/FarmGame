@@ -1,5 +1,5 @@
 # 🚜 Life of a Chill Guy - Game Nông Trại 2D
-![image](https://github.com/user-attachments/assets/f24efb4f-1554-4581-a7f1-d3a65d776504)
+![Giới thiệu](Gameplay/intro.png)
 
 Một game nông trại 2D được phát triển bằng Pygame với đầy đủ tính năng trồng trọt, chăn nuôi và khám phá.
 
