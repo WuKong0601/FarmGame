@@ -114,33 +114,33 @@ FarmingGame/
 
 🖼️ Ảnh Chụp Màn Gian
 Gameplay 1: Cuốc đất
-![Cuốc đất](Gameplay/cuoc-dat.png)
+![Cuốc đất](./Gameplay/cuoc-dat.png)
 
 Gameplay 2: Trồng cây
-![Trồng cây](Gameplay/trong-cay.png)
+![Trồng cây](./Gameplay/trong-cay.png)
 
 Gameplay 3
-![Ngắm cá](Gameplay/ngam-ca.png)
+![Ngắm cá](./Gameplay/ngam-ca.png)
 
 Gameplay 4: Chặt cây, thu gỗ và táo
-![Chặt cây](Gameplay/chat-cay.png)
+![Chặt cây](./Gameplay/chat-cay.png)
 
 Gameplay 5: Tưới cây
-![Tưới cây](tuoi-cay/intro.png)
+![Tưới cây](./tuoi-cay/intro.png)
 
 Gameplay 6: Phát triển cây theo thời gian
-![Phát triển](Gameplay/phat-trien.png)
+![Phát triển](./Gameplay/phat-trien.png)
 
 Gameplay 7: Thu hoạch
-![Thu hoạch](Gameplay/thu-hoach.png)
+![Thu hoạch](./Gameplay/thu-hoach.png)
 
 Gameplay 8: Giao dịch
 ![Giao dịch 1](./Gameplay/giao-dich-1.png)
-![Giao dịch 2](Gameplay/giao-dich-2.png)
+![Giao dịch 2](./Gameplay/giao-dich-2.png)
 
 Gameplay 9: Chăn nuôi
-![Chăn nuôi 1](Gameplay/chan-nuoi-1.png)
-![Chăn nuôi 2](Gameplay/chan-nuoi-2.png)
+![Chăn nuôi 1](./Gameplay/chan-nuoi-1.png)
+![Chăn nuôi 2](./Gameplay/chan-nuoi-2.png)
 
 ## 📌 Tiến Độ Phát Triển
 
