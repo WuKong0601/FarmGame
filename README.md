@@ -114,7 +114,8 @@ FarmingGame/
 
 🖼️ Ảnh Chụp Màn Gian
 Gameplay 1: Cuốc đất
-![image](https://github.com/user-attachments/assets/8e094085-ea9b-429f-aa6b-3c2d09f6d2a6)
+![image](https://github.com/user-attachments/assets/f12ac435-5310-417b-9b90-cc78731d527e)
+
 
 Gameplay 2: Trồng cây
 ![image](https://github.com/user-attachments/assets/5b4afe62-66e2-4046-83eb-83776a4a855b)
