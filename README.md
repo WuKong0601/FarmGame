@@ -114,7 +114,7 @@ FarmingGame/
 ```
 🖼️ Ảnh Chụp Màn Gian
 Gameplay 1: Cuốc đất
-![cuoc-dat](https://github.com/user-attachments/assets/1838271c-42f0-4eed-9eb9-6c44d906b398)
+![Cuốc Đất](./Gameplay/trong-cay.png)
 
 
 Gameplay 2: Trồng cây
@@ -127,7 +127,7 @@ Gameplay 4: Chặt cây, thu gỗ và táo
 ![Chặt cây](./Gameplay/chat-cay.png)
 
 Gameplay 5: Tưới cây
-![Tưới cây](./tuoi-cay/intro.png)
+![Tưới cây](./Gameplay/tuoi-cay.png)
 
 Gameplay 6: Phát triển cây theo thời gian
 ![Phát triển](./Gameplay/phat-trien.png)
