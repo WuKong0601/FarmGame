@@ -116,7 +116,6 @@ FarmingGame/
 Gameplay 1: Cuốc đất
 ![Cuốc đất](Gameplay/cuoc-dat.png)
 
-
 Gameplay 2: Trồng cây
 ![Trồng cây](Gameplay/trong-cay.png)
 
@@ -140,7 +139,7 @@ Gameplay 8: Giao dịch
 ![Giao dịch 2](Gameplay/giao-dich-2.png)
 
 Gameplay 9: Chăn nuôi
-![Chăn nuôi 1](Gameplay/chan-nuoi-1/intro.png)
+![Chăn nuôi 1](Gameplay/chan-nuoi-1.png)
 ![Chăn nuôi 2](Gameplay/chan-nuoi-2.png)
 
 ## 📌 Tiến Độ Phát Triển
