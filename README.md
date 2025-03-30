@@ -53,7 +53,7 @@ ESC	Mở/đóng menu
 
 ## 🌳 Cấu trúc dự án
 
-```bash
+
 FarmingGame/
 │
 ├── 📁 .git/                # Thư mục Git chứa thông tin version control
