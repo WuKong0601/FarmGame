@@ -135,7 +135,7 @@ Gameplay 7: Thu hoạch
 ![Thu hoạch](Gameplay/thu-hoach.png)
 
 Gameplay 8: Giao dịch
-![Giao dịch 1](Gameplay/giao-dich-1.png)
+![Giao dịch 1](./Gameplay/giao-dich-1.png)
 ![Giao dịch 2](Gameplay/giao-dich-2.png)
 
 Gameplay 9: Chăn nuôi
