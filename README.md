@@ -53,7 +53,7 @@ ESC	Mở/đóng menu
 
 ## 🌳 Cấu trúc dự án
 
-
+```bash
 FarmingGame/
 │
 ├── 📁 .git/                # Thư mục Git chứa thông tin version control
@@ -111,7 +111,7 @@ FarmingGame/
     │   └── frame2.png
     │
     └── ...                # Các thư mục đồ họa khác
-
+'''
 🖼️ Ảnh Chụp Màn Gian
 Gameplay 1: Cuốc đất
 ![cuoc-dat](https://github.com/user-attachments/assets/1838271c-42f0-4eed-9eb9-6c44d906b398)
