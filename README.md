@@ -114,7 +114,7 @@ FarmingGame/
 ```
 🖼️ Ảnh Chụp Màn Gian
 Gameplay 1: Cuốc đất
-![Cuốc Đất](./Gameplay/trong-cay.png)
+![Cuốc Đất](./Gameplay/cuoc-dat.png)
 
 
 Gameplay 2: Trồng cây
